@@ -69,6 +69,10 @@ function Register() {
 		}
 	};
 
+	const handleGoToLogin = () => {
+		navigate("/login");
+	};
+
 	return (
 		<Box
 			display="flex"
@@ -127,10 +131,18 @@ function Register() {
 						variant="contained"
 						color="primary"
 						fullWidth
-						sx={{ mt: 2 }}
+						sx={{ mt: 2, mb: 1 }}
 						disabled={loading}
 					>
 						{loading ? <CircularProgress size={24} /> : "Registrar"}
+					</Button>
+					<Button
+						onClick={handleGoToLogin}
+						variant="outlined"
+						color="secondary"
+						fullWidth
+					>
+						Voltar ao Login
 					</Button>
 				</CardContent>
 			</Card>

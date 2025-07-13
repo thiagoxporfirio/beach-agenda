@@ -86,7 +86,7 @@ function Dashboard() {
 
 	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-	const [selectedQuadra, setSelectedQuadra] = React.useState<string | null>(null);
+	const [selectedQuadra, setSelectedQuadra] = React.useState<string | null>("Quadra 1");
 
 	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
 		setAnchorElNav(event.currentTarget);

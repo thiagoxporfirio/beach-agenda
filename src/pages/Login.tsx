@@ -15,6 +15,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { z } from "zod";
 // import { formatPhoneBR } from "../utils/formatPhoneBR";
 import { mockLogin } from "../mock/authMock";
+import { useAuth } from "../context/AuthContext";
 
 const phoneSchema = z.string().regex(/^\d{10,11}$/, "Número de telefone inválido");
 const passwordSchema = z.string().min(6, "A senha deve ter pelo menos 6 caracteres");
@@ -25,6 +26,7 @@ function Login() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [errors, setErrors] = useState({ phone: "", password: "" });
 	const navigate = useNavigate();
+	const { login } = useAuth();
 
 	const validateInputs = () => {
 		const phoneValidation = phoneSchema.safeParse(phone.replace(/\D/g, ""));
@@ -40,12 +42,11 @@ function Login() {
 
 	const handleLogin = () => {
 		if (validateInputs()) {
-			const token = mockLogin(phone, password);
-			if (token) {
-				localStorage.setItem("authToken", token);
-				navigate("/");
-			} else {
-				console.log("Credenciais inválidas");
+			try {
+				const token = mockLogin(phone, password);
+				login(token);
+			} catch (error) {
+				console.log("Credenciais inválidas:", error);
 			}
 		} else {
 			console.log("Erro na validação dos inputs");
