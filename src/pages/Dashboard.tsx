@@ -14,8 +14,10 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { UserContext } from "../context/UserContext";
+import { useAuth } from "../context/AuthContext";
 import AdbIcon from "@mui/icons-material/Adb";
 import Quadra from "../components/Quadra";
+import Admin from "../components/Admin";
 
 const pages = [
 	{
@@ -76,6 +78,7 @@ const pages = [
 
 function Dashboard() {
 	const userContext = useContext(UserContext);
+	const { user: authUser } = useAuth();
 
 	if (!userContext) {
 		throw new Error("UserContext must be used within a UserProvider");
@@ -83,6 +86,12 @@ function Dashboard() {
 
 	const { user } = userContext;
 	console.log("User in Dashboard:", user); // TODO: add user
+
+	// Criar array de páginas dinamicamente baseado na role
+	const availablePages = [
+		...pages,
+		...(authUser?.role === 'admin' ? [{ name: "Admin", times: [] }] : [])
+	];
 
 	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -171,7 +180,7 @@ function Dashboard() {
 								onClose={handleCloseNavMenu}
 								sx={{ display: { xs: "block", md: "none" } }}
 							>
-								{pages.map((page) => (
+								{availablePages.map((page) => (
 									<MenuItem key={page.name} onClick={() => handleSelectQuadra(page.name)}>
 										<Typography sx={{ textAlign: "center" }}>{page.name}</Typography>
 									</MenuItem>
@@ -198,7 +207,7 @@ function Dashboard() {
 							LOGO
 						</Typography>
 						<Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-							{pages.map((page) => (
+							{availablePages.map((page) => (
 								<Button
 									key={page.name}
 									onClick={() => handleSelectQuadra(page.name)}
@@ -241,9 +250,15 @@ function Dashboard() {
 				</Container>
 			</AppBar>
 			<Box sx={{ p: 2 }}>
-				{pages.map((page) =>
-					selectedQuadra === page.name ? <Quadra key={page.name} quadraName={page.name} times={page.times} /> : null
-				)}
+				{availablePages.map((page) => {
+					if (selectedQuadra === page.name) {
+						if (page.name === "Admin") {
+							return <Admin key={page.name} />;
+						}
+						return <Quadra key={page.name} quadraName={page.name} times={page.times} />;
+					}
+					return null;
+				})}
 			</Box>
 		</>
 	);
