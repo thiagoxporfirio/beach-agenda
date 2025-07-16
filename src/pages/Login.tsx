@@ -44,7 +44,7 @@ function Login() {
 		if (validateInputs()) {
 			try {
 				const token = mockLogin(phone, password);
-				login(token);
+				login(token, phone);
 			} catch (error) {
 				console.log("Credenciais inválidas:", error);
 			}
