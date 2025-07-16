@@ -9,10 +9,11 @@ import {
 	Select,
 	FormControl,
 	InputLabel,
-	Snackbar
+	Snackbar,
+	Alert
 } from "@mui/material";
 import ReservationModal from "./ReservationModal";
-import { saveQuadraData } from "../api/saveQuadraData";
+// import { saveQuadraData } from "../api/saveQuadraData";
 
 interface QuadraProps {
 	quadraName: string;
@@ -26,9 +27,21 @@ const Quadra: React.FC<QuadraProps> = ({ quadraName, times }) => {
 	const [year] = useState<number>(new Date().getFullYear());
 	const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 	const [toastOpen, setToastOpen] = useState<boolean>(false);
+	const [showDateWarning, setShowDateWarning] = useState<boolean>(false);
 
 	const handleTimeClick = (time: string) => {
 		setSelectedTime(time);
+	};
+
+	const handleDayChange = (selectedDay: number) => {
+		const currentDay = new Date().getDate();
+		setDay(selectedDay);
+		
+		if (selectedDay < currentDay) {
+			setShowDateWarning(true);
+		} else {
+			setShowDateWarning(false);
+		}
 	};
 
 	const handleReserve = () => {
@@ -37,11 +50,11 @@ const Quadra: React.FC<QuadraProps> = ({ quadraName, times }) => {
 
 	const handleConfirm = async () => {
 		try {
-			await saveQuadraData({
-				quadraName,
-				date: `${day}/${month}/${year}`,
-				time: selectedTime || ""
-			});
+			// await saveQuadraData({
+			// 	quadraName,
+			// 	date: `${day}/${month}/${year}`,
+			// 	time: selectedTime || ""
+			// });
 			setToastOpen(true);
 			setIsModalOpen(false);
 		} catch (error) {
@@ -74,7 +87,7 @@ const Quadra: React.FC<QuadraProps> = ({ quadraName, times }) => {
 								<InputLabel>Dia</InputLabel>
 								<Select
 									value={day}
-									onChange={e => setDay(Number(e.target.value))}
+									onChange={e => handleDayChange(Number(e.target.value))}
 								>
 									{[...Array(31)].map((_, index) => (
 										<MenuItem key={index + 1} value={index + 1}>
@@ -96,6 +109,11 @@ const Quadra: React.FC<QuadraProps> = ({ quadraName, times }) => {
 								</Select>
 							</FormControl>
 						</Box>
+						{showDateWarning && (
+							<Alert severity="warning" sx={{ mt: 2, maxWidth: 400 }}>
+								Não é possível fazer reservas para datas anteriores ao dia atual.
+							</Alert>
+						)}
 						<Box
 							display="flex"
 							flexWrap="wrap"
